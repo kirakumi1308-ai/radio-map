@@ -1,0 +1,503 @@
+/* 全体の背景 */
+body {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 100%);
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+/* ナビゲーション */
+.nav-links {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+.nav-link {
+  padding: 12px 24px;
+  background: white;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #d47d4a;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(255, 140, 80, 0.15);
+}
+.nav-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 140, 80, 0.25);
+}
+.nav-link.active {
+  background: linear-gradient(135deg, #ff9966, #ffbb99);
+  color: white;
+}
+
+/* カード */
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(255, 140, 80, 0.15);
+  border: 2px solid rgba(255, 200, 150, 0.3);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 見出し */
+h2 {
+  color: #d47d4a;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+/* 統計表示エリア */
+#my-stats {
+  background: linear-gradient(135deg, #fff0e0 0%, #ffe8d5 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 2px solid #ffd9b3;
+  box-shadow: 0 4px 16px rgba(255, 140, 80, 0.1);
+  text-align: center;
+}
+.my-name {
+  color: #a66543;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.my-km {
+  color: #d47d4a;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 8px 0;
+}
+.my-count {
+  color: #b8774f;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* セッションテキスト */
+#session-text {
+  color: #a66543;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
+  text-align: center;
+}
+
+/* セッションドット */
+.session-status {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.session-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffccaa;
+  border: 3px solid #ffb380;
+  transition: all 0.3s ease;
+}
+.session-dot.active {
+  background: #ff8c5a;
+  border-color: #ff7043;
+  box-shadow: 0 0 12px rgba(255, 140, 90, 0.6);
+}
+
+/* フォームグループ */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  color: #a66543;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #ffd9b3;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fffaf5;
+  color: #5a4a3a;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+.form-group input:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: #ffb380;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 140, 80, 0.1);
+}
+.form-group input::placeholder, .form-group textarea::placeholder {
+  color: #c9b5a3;
+}
+
+/* YouTubeボタン */
+.youtube-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff8c66, #ffb380);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 140, 102, 0.3);
+  text-decoration: none;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.youtube-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(255, 140, 102, 0.4);
+  background: linear-gradient(135deg, #ff7a52, #ffa366);
+}
+
+/* 参加ボタン */
+.btn-participate {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #ff9966, #ffbb99);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 153, 102, 0.35);
+  margin-top: 8px;
+}
+.btn-participate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255, 153, 102, 0.45);
+  background: linear-gradient(135deg, #ff8852, #ffaa85);
+}
+.btn-participate:active {
+  transform: translateY(0);
+}
+.btn-participate:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* メンバーリスト */
+#member-list {
+  background: #fffaf5;
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 60px;
+  border: 2px solid #ffebd9;
+  color: #7a6a5a;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ドクターイエロー通知 */
+.doctor-yellow-alert {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  animation: shake 0.5s;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5);
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* ========================================
+   地図ページ専用スタイル
+   ======================================== */
+.map-page-container {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.map-section, .stamp-section {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(255, 140, 80, 0.15);
+  border: 2px solid rgba(255, 200, 150, 0.3);
+}
+
+/* 進捗バー */
+.progress-container {
+  margin-bottom: 20px;
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #a66543;
+  font-weight: 600;
+}
+.progress-bar {
+  width: 100%;
+  height: 24px;
+  background: #ffe8d5;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #ffd9b3;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9966 0%, #ffbb99 100%);
+  transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* 統計カード */
+.map-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.map-stat-card {
+  background: linear-gradient(135deg, #fff0e0 0%, #ffe8d5 100%);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 2px solid #ffd9b3;
+}
+.map-stat-value {
+  color: #d47d4a;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.map-stat-label {
+  color: #a66543;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 地図コンテナ */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: linear-gradient(180deg, #e0f2ff 0%, #fff9f0 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #ffd9b3;
+}
+.map-canvas {
+  position: absolute;
+  width: 600px;
+  height: 800px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.waypoint {
+  position: absolute;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.waypoint:hover {
+  transform: scale(1.3);
+}
+.current-train {
+  position: absolute;
+  font-size: 28px;
+  animation: pulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 140, 80, 0.8));
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* スタンプセクション */
+.stamp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.stamp-progress {
+  color: #b8774f;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stamp-item {
+  background: #fffaf5;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 2px solid #ffd9b3;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.stamp-item.collected {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  border-color: #FF8C00;
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+}
+.stamp-emoji {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 4px;
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+.stamp-item.collected .stamp-emoji {
+  filter: grayscale(0);
+  opacity: 1;
+}
+.stamp-name {
+  font-size: 12px;
+  color: #a66543;
+  font-weight: 600;
+}
+.stamp-item.collected .stamp-name {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* ランキング */
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #fffaf5;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 2px solid #ffebd9;
+}
+.ranking-item:nth-child(1) { 
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: white;
+}
+.ranking-item:nth-child(2) { 
+  background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+  color: white;
+}
+.ranking-item:nth-child(3) { 
+  background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
+  color: white;
+}
+.ranking-rank {
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 12px;
+  min-width: 30px;
+  text-align: center;
+}
+.ranking-name {
+  flex: 1;
+  font-weight: 600;
+}
+.ranking-distance {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* スタンプモーダル */
+.stamp-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.stamp-modal.show {
+  display: flex;
+}
+.stamp-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+.stamp-modal-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+.stamp-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d47d4a;
+  margin-bottom: 16px;
+}
+.stamp-modal-info {
+  text-align: left;
+  margin-bottom: 20px;
+  color: #666;
+  line-height: 1.8;
+}
+.stamp-modal-close {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #ff9966, #ffbb99);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* レスポンシブ */
+@media (max-width: 1024px) {
+  .map-page-container {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  .card, .map-section, .stamp-section { padding: 16px; }
+  h2 { font-size: 1.2rem; }
+  .map-container { height: 300px; }
+  .stamp-grid { grid-template-columns: 1fr; }
+}

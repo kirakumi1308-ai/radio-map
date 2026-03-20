@@ -3,63 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚄 新幹線100駅の旅 - 乗車報告</title>
+  <title>🗾 新幹線100駅の旅 - 全国マップ</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="nav-links">
-    <a href="index.html" class="nav-link active">🚄 乗車報告</a>
-    <a href="map.html" class="nav-link">🗾 全国の旅</a>
+    <a href="index.html" class="nav-link">🚄 乗車報告</a>
+    <a href="map.html" class="nav-link active">🗾 全国の旅</a>
   </div>
 
-  <div class="card registration-container">
-    <h2>🚄 今日の乗車報告</h2>
-    
-    <!-- YouTube -->
-    <a href="https://youtu.be/q91wVnUGcnk?si=8mDKoE7orh-Qt9CY" target="_blank" class="youtube-btn">
-      🔔 出発のベルを鳴らす（YouTube）
-    </a>
-
-    <!-- ドクターイエロー通知 -->
-    <div id="doctor-yellow-alert" style="display:none;" class="doctor-yellow-alert">
-      🌟 ドクターイエローが通過！ 2駅進みました！
-    </div>
-
-    <!-- 統計表示 -->
-    <div id="my-stats">
-      <div class="my-name" id="my-stats-name">あなたの累計</div>
-      <div class="my-km" id="my-stats-km">0 km</div>
-      <div class="my-count" id="my-stats-count">0駅進行</div>
-    </div>
-
-    <!-- セッションドット -->
-    <div id="session-text">本日の乗車残り: 3回</div>
-    <div class="session-status">
-      <div class="session-dot active" id="dot-0"></div>
-      <div class="session-dot active" id="dot-1"></div>
-      <div class="session-dot active" id="dot-2"></div>
-    </div>
-
-    <!-- フォーム -->
-    <div class="form-group">
-      <label>運転手の名前 *</label>
-      <input type="text" id="input-name" placeholder="例: 田中太郎" maxlength="20">
-    </div>
-
-    <div class="form-group">
-      <label>一言コメント（任意）</label>
-      <input type="text" id="input-comment" placeholder="例: 今日も元気よく！" maxlength="100">
-    </div>
-
-    <button class="btn-participate" id="btn-participate">🚄 乗車報告</button>
-
-    <!-- 今日の運転手リスト -->
-    <div style="margin-top:20px">
-      <h2>👨‍🚗 今日の運転手</h2>
-      <div id="member-list">
-        <span style="color:#bbb;font-size:0.85rem;">まだ誰も乗務していません</span>
+  <div class="map-page-container">
+    <div class="map-section">
+      <h2>🗾 全国鉄道の旅</h2>
+      
+      <div class="progress-container">
+        <div class="progress-info">
+          <span id="current-station">スタート地点</span>
+          <span id="distance-text">0 / 3,800 km</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
       </div>
+
+      <div class="map-stats">
+        <div class="map-stat-card">
+          <div class="map-stat-value" id="total-distance">0 km</div>
+          <div class="map-stat-label">総走行距離</div>
+        </div>
+        <div class="map-stat-card">
+          <div class="map-stat-value" id="visited-stations">0</div>
+          <div class="map-stat-label">訪問駅数</div>
+        </div>
+        <div class="map-stat-card">
+          <div class="map-stat-value" id="current-location">東京</div>
+          <div class="map-stat-label">現在地</div>
+        </div>
+      </div>
+
+      <div class="map-container" id="map-container">
+        <div class="map-canvas" id="map-canvas"></div>
+      </div>
+    </div>
+
+    <div class="stamp-section">
+      <div class="stamp-header">
+        <h2>🏛️ 名所スタンプ</h2>
+        <div class="stamp-progress" id="stamp-progress">収集: 0/14</div>
+      </div>
+      <div class="stamp-grid" id="stamp-grid"></div>
+
+      <div style="margin-top: 24px;">
+        <h2>🏆 参加ランキング</h2>
+        <ul class="ranking-list" id="ranking-list">
+          <li style="text-align:center;color:#999;">データ読み込み中...</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="stamp-modal" id="stamp-modal">
+    <div class="stamp-modal-content">
+      <div class="stamp-modal-icon" id="modal-icon">🏯</div>
+      <div class="stamp-modal-title" id="modal-title">東京タワー</div>
+      <div class="stamp-modal-info" id="modal-info">
+        <p><strong>所在地:</strong> 東京都</p>
+        <p><strong>取得日:</strong> 2026年3月19日</p>
+        <p><strong>説明:</strong> 東京のシンボルタワー</p>
+      </div>
+      <button class="stamp-modal-close" onclick="closeStampModal()">閉じる</button>
     </div>
   </div>
 

@@ -164,7 +164,7 @@ async function loadUserStats() {
     const { data, error } = await supabase
       .from('participations')
       .select('*')
-      .eq('name', name)
+      .eq('user_name', name)  // ⭐ name → user_name に変更
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -200,7 +200,7 @@ async function loadTodayMembers() {
     
     const { data, error } = await supabase
       .from('participations')
-      .select('name, comment, created_at')
+      .select('user_name, comment, created_at')  // ⭐ name → user_name に変更
       .gte('created_at', `${today}T00:00:00`)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -211,7 +211,7 @@ async function loadTodayMembers() {
     if (memberList && data) {
       memberList.innerHTML = data.map(p => 
         `<div class="member-item">
-          <span class="member-name">${p.name}</span>
+          <span class="member-name">${p.user_name}</span>
           ${p.comment ? `<span class="member-comment">: ${p.comment}</span>` : ''}
         </div>`
       ).join('');
@@ -291,7 +291,7 @@ async function participate() {
     const { data, error } = await supabase
       .from('participations')
       .insert([{
-        name: name,
+        user_name: name,  // ⭐ name → user_name に変更
         comment: comment || null,
         station_progress: stationsToAdd,
         is_doctor_yellow: isDoctorYellow
@@ -445,7 +445,7 @@ async function loadRanking() {
   try {
     const { data, error } = await supabase
       .from('participations')
-      .select('name, station_progress')
+      .select('user_name, station_progress')  // ⭐ name → user_name に変更
       .order('station_progress', { ascending: false });
 
     if (error) throw error;
@@ -453,10 +453,10 @@ async function loadRanking() {
     // 名前ごとに集計
     const userStats = {};
     data.forEach(p => {
-      if (!userStats[p.name]) {
-        userStats[p.name] = 0;
+      if (!userStats[p.user_name]) {  // ⭐ name → user_name に変更
+        userStats[p.user_name] = 0;
       }
-      userStats[p.name] += p.station_progress || 0;
+      userStats[p.user_name] += p.station_progress || 0;
     });
 
     // 配列に変換してソート

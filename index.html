@@ -8,56 +8,80 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ナビゲーション -->
   <div class="nav-links">
     <a href="index.html" class="nav-link active">🚄 乗車報告</a>
     <a href="map.html" class="nav-link">🗾 全国の旅</a>
   </div>
 
-  <div class="card registration-container">
-    <h2>🚄 今日の乗車報告</h2>
-    
+  <!-- ドクターイエローアラート -->
+  <div id="doctor-yellow-alert" class="doctor-yellow-alert" style="display: none;">
+    🎉 ドクターイエロー出現！ 2駅進みました！ 🎉
+  </div>
+
+  <!-- メインコンテナ -->
+  <div class="container">
+    <!-- タイトル -->
+    <h1 class="page-title">🚄 今日の乗車報告</h1>
+
+    <!-- YouTubeボタン -->
     <a href="https://youtu.be/q91wVnUGcnk?si=8mDKoE7orh-Qt9CY" target="_blank" class="youtube-btn">
-      🔔 出発のベルを鳴らす（YouTube）
+      🔔 佐伯のベルを鳴らす（YouTube）
     </a>
 
-    <div id="doctor-yellow-alert" style="display:none;" class="doctor-yellow-alert">
-      🌟 ドクターイエローが通過！ 2駅進みました！
+    <!-- 統計カード -->
+    <div class="stats-card" id="my-stats">
+      <h2>あなたの累計</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-label">運転手名</div>
+          <div class="stat-value" id="stat-name">ゲスト さん</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">総走行距離</div>
+          <div class="stat-value" id="stat-distance">0 km</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">訪問駅数</div>
+          <div class="stat-value" id="stat-stations">0駅進行</div>
+        </div>
+      </div>
     </div>
 
-    <div id="my-stats">
-      <div class="my-name" id="my-stats-name">あなたの累計</div>
-      <div class="my-km" id="my-stats-km">0 km</div>
-      <div class="my-count" id="my-stats-count">0駅進行</div>
+    <!-- セッションドット -->
+    <div class="session-info">
+      <h3>本日の乗車回数: <span id="session-count">0</span>/3回</h3>
+      <div id="session-dots" class="session-dots">
+        <!-- JavaScriptで生成 -->
+      </div>
     </div>
 
-    <div id="session-text">本日の乗車残り: 3回</div>
-    <div class="session-status">
-      <div class="session-dot active" id="dot-0"></div>
-      <div class="session-dot active" id="dot-1"></div>
-      <div class="session-dot active" id="dot-2"></div>
+    <!-- 参加フォーム -->
+    <div class="form-card">
+      <div class="form-group">
+        <label for="input-name">運転手の名前 *</label>
+        <input type="text" id="input-name" placeholder="例: 田中太郎" maxlength="20">
+      </div>
+
+      <div class="form-group">
+        <label for="input-comment">一言コメント（任意）</label>
+        <input type="text" id="input-comment" placeholder="例: 今日も元気よく！" maxlength="100">
+      </div>
+
+      <button class="btn-participate" id="btn-participate">
+        🚄 乗車報告
+      </button>
     </div>
 
-    <div class="form-group">
-      <label>運転手の名前 *</label>
-      <input type="text" id="input-name" placeholder="例: 田中太郎" maxlength="20">
-    </div>
-
-    <div class="form-group">
-      <label>一言コメント（任意）</label>
-      <input type="text" id="input-comment" placeholder="例: 今日も元気よく！" maxlength="100">
-    </div>
-
-    <button class="btn-participate" id="btn-participate">🚄 乗車報告</button>
-
-    <div style="margin-top:20px">
-      <h2>👨‍🚗 今日の運転手</h2>
-      <div id="member-list">
-        <span style="color:#bbb;font-size:0.85rem;">まだ誰も乗務していません</span>
+    <!-- 今日の運転手リスト -->
+    <div class="members-card">
+      <h2>👥 今日の運転手</h2>
+      <div id="today-members" style="margin-top:20px;">
+        <span style="color:#bbb;font-size:0.85em;">まだ誰も乗車していません</span>
       </div>
     </div>
   </div>
 
-<script src="script.js?v=3"></script>
-
+  <script src="script.js?v=3"></script>
 </body>
 </html>

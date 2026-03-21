@@ -3,70 +3,328 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🗾 新幹線全駅の旅 - 全国マップ</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <title>🗾 地図 - ラジオ体操全国の旅</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Hiragino Sans','Meiryo',sans-serif; background:linear-gradient(135deg,#fef5e7 0%,#ffe8cc 100%); min-height:100vh; padding:20px; }
+    
+    .container { max-width:1200px; margin:0 auto; }
+    
+    /* ナビゲーション */
+    .nav { display:flex; gap:12px; margin-bottom:24px; }
+    .nav-btn { flex:1; padding:16px; background:#fff; border:none; border-radius:16px; font-size:16px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(255,140,80,0.1); transition:all .3s; text-decoration:none; text-align:center; color:#333; }
+    .nav-btn.active { background:linear-gradient(135deg,#ff8c50 0%,#ff6b35 100%); color:#fff; box-shadow:0 6px 24px rgba(255,108,53,0.4); }
+    .nav-btn:hover:not(.active) { background:#fff5f0; transform:translateY(-2px); }
+    
+    /* 現在地バー */
+    .location-bar { background:#fff; border-radius:20px; padding:20px; margin-bottom:24px; box-shadow:0 4px 16px rgba(255,140,80,0.1); text-align:center; }
+    .location-label { font-size:14px; color:#a66543; margin-bottom:8px; font-weight:600; }
+    .location-name { font-size:32px; font-weight:700; color:#ff8c50; }
+    
+    /* 地図エリア */
+    #map-svg-area { position:relative; width:100%; max-width:800px; height:600px; margin:0 auto 24px; background:#fff; border-radius:20px; padding:20px; box-shadow:0 4px 16px rgba(255,140,80,0.1); overflow:hidden; }
+    #map-svg-area svg { width:100%; height:100%; display:block; }
+    
+    /* 都道府県の色設定 */
+    #map-svg-area .prefecture { fill:#ffffff; stroke:#cccccc; stroke-width:0.5; transition:fill .4s; }
+    #map-svg-area .prefecture.visited { fill:#66bb6a; }
+    #map-svg-area .prefecture.current-pref { fill:#ff7043; }
+    
+    /* 進捗バー */
+    .progress-section { background:#fff; border-radius:20px; padding:24px; margin-bottom:24px; box-shadow:0 4px 16px rgba(255,140,80,0.1); }
+    .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .progress-title { font-size:18px; font-weight:700; color:#333; }
+    .progress-stats { font-size:16px; color:#a66543; font-weight:600; }
+    .progress-bar-bg { width:100%; height:32px; background:#f0f0f0; border-radius:16px; overflow:hidden; position:relative; }
+    .progress-bar-fill { height:100%; background:linear-gradient(90deg,#ff8c50 0%,#ff6b35 100%); transition:width .6s; }
+    .goal-badges { display:flex; justify-content:space-around; margin-top:16px; }
+    .badge { text-align:center; }
+    .badge-icon { font-size:28px; margin-bottom:4px; filter:grayscale(100%); opacity:0.5; transition:all .3s; }
+    .badge.earned .badge-icon { filter:grayscale(0%); opacity:1; transform:scale(1.2); }
+    .badge-label { font-size:12px; color:#999; font-weight:600; }
+    .badge.earned .badge-label { color:#ff8c50; }
+    
+    /* WAYPOINT リスト */
+    .waypoint-section { background:#fff; border-radius:20px; padding:24px; margin-bottom:24px; box-shadow:0 4px 16px rgba(255,140,80,0.1); }
+    .waypoint-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; max-height:400px; overflow-y:auto; }
+    .waypoint-chip { background:#f5f5f5; border-radius:12px; padding:12px; text-align:center; border:2px solid transparent; transition:all .3s; }
+    .waypoint-chip.visited { background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%); border-color:#66bb6a; }
+    .waypoint-chip.current { background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%); border-color:#ff7043; box-shadow:0 0 12px rgba(255,112,67,0.5); animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.05);} }
+    .waypoint-emoji { font-size:28px; margin-bottom:4px; }
+    .waypoint-name { font-size:13px; font-weight:600; color:#333; margin-bottom:2px; }
+    .waypoint-km { font-size:11px; color:#999; }
+    
+    /* スタンプセクション */
+    .stamp-section { background:#fff; border-radius:20px; padding:24px; box-shadow:0 4px 16px rgba(255,140,80,0.1); }
+    .stamp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px; margin-top:16px; }
+    .stamp-card { background:#f5f5f5; border-radius:12px; padding:16px; text-align:center; border:2px solid transparent; transition:all .3s; }
+    .stamp-card.earned { background:linear-gradient(135deg,#fff5f0 0%,#ffe8d9 100%); border-color:#ff8c50; box-shadow:0 4px 12px rgba(255,140,80,0.3); }
+    .stamp-emoji { font-size:32px; margin-bottom:8px; filter:grayscale(100%); opacity:0.5; }
+    .stamp-card.earned .stamp-emoji { filter:grayscale(0%); opacity:1; }
+    .stamp-name { font-size:13px; font-weight:600; color:#333; }
+    
+    @media (max-width:768px) { .waypoint-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));} .stamp-grid{grid-template-columns:repeat(2,1fr);} #map-svg-area{height:400px;} }
+  </style>
 </head>
 <body>
-  <!-- ナビゲーション -->
-  <div class="nav-links">
-    <a href="index.html" class="nav-link">🚄 乗車報告</a>
-    <a href="map.html" class="nav-link active">🗾 全国の旅</a>
-  </div>
-
-  <div class="container map-container-wrapper">
-    <!-- 左側：地図セクション -->
-    <div class="map-section">
-      <h1 class="page-title">🗺️ 全国鉄道の旅</h1>
-
-      <!-- 進捗バー -->
-      <div class="progress-section">
-        <div class="progress-label">スタート地点</div>
-        <div class="progress-info">
-          <span id="progress-current">0</span> / <span id="progress-total">126駅</span>
-        </div>
-        <div class="progress-bar-container">
-          <div id="progress-bar" class="progress-bar" style="width:0%;"></div>
-        </div>
-      </div>
-
-      <!-- 統計カード -->
-      <div class="stats-cards">
-        <div class="stat-card">
-          <div class="stat-number" id="total-distance">0駅</div>
-          <div class="stat-label">訪問駅数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="visited-stations">新大阪</div>
-          <div class="stat-label">現在地</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="current-location">126駅中</div>
-          <div class="stat-label">総駅数</div>
-        </div>
-      </div>
-
-      <!-- 地図エリア -->
-      <div id="map-container" class="map-area"></div>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav-btn">🚆 乗車報告</a>
+      <a href="map.html" class="nav-btn active">🗾 全国の旅</a>
+    </nav>
+    
+    <div class="location-bar">
+      <div class="location-label">🚄 現在地</div>
+      <div class="location-name" id="current-location">新大阪</div>
     </div>
-
-    <!-- 右側：スタンプとランキング -->
-    <div class="side-section">
-      <!-- スタンプセクション -->
-      <div class="stamps-section">
-        <h2>🏛️ 名所スタンプ</h2>
-        <div class="stamp-count">収集: <span id="stamp-count">0</span>/14</div>
-        <div id="stamp-grid" class="stamp-grid"></div>
+    
+    <div id="map-svg-area"></div>
+    
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">🎯 チーム進捗</span>
+        <span class="progress-stats"><span id="progress-current">0</span> / <span id="progress-total">126</span>駅</span>
       </div>
-
-      <!-- ランキングセクション -->
-      <div class="ranking-section">
-        <h2>🏆 参加ランキング</h2>
-        <div id="ranking-list" class="ranking-list"></div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div class="goal-badges">
+        <div class="badge" id="badge-bronze"><div class="badge-icon">🥉</div><div class="badge-label">42駅</div></div>
+        <div class="badge" id="badge-silver"><div class="badge-icon">🥈</div><div class="badge-label">84駅</div></div>
+        <div class="badge" id="badge-gold"><div class="badge-icon">🥇</div><div class="badge-label">126駅</div></div>
       </div>
     </div>
+    
+    <div class="waypoint-section">
+      <h2 style="font-size:20px;color:#333;margin-bottom:16px;">📍 駅一覧</h2>
+      <div class="waypoint-grid" id="waypoint-list"></div>
+    </div>
+    
+    <div class="stamp-section">
+      <h2 style="font-size:20px;color:#333;margin-bottom:8px;">🎫 スタンプコレクション</h2>
+      <p style="font-size:14px;color:#a66543;margin-bottom:16px;">特定の駅でスタンプをゲット！</p>
+      <div class="stamp-grid" id="stamp-grid"></div>
+    </div>
   </div>
-
-  <script src="script.js?v=5"></script>
+  
+  <script>
+    const SUPABASE_URL = 'https://hhiwvbthsyiwkoiffvwp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoaXd2YnRoc3lpd2tvaWZmdndwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc3OTE1MzcsImV4cCI6MjA1MzM2NzUzN30.9BDEBsq1x-t_bY5r0YN1_P5r6DW1ZkSNh1mWEuYtEOw';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    const GOAL_BRONZE = 42;
+    const GOAL_SILVER = 84;
+    const GOAL_GOLD = 126;
+    
+    const STAMPS = [
+      {index:0,emoji:'🍜',name:'新大阪'},
+      {index:1,emoji:'⛩️',name:'京都'},
+      {index:4,emoji:'🏯',name:'名古屋'},
+      {index:11,emoji:'🥢',name:'金沢'},
+      {index:13,emoji:'💊',name:'富山'},
+      {index:19,emoji:'🍚',name:'新潟'},
+      {index:33,emoji:'🗼',name:'東京'},
+      {index:41,emoji:'🍵',name:'静岡'},
+      {index:43,emoji:'🥟',name:'浜松'},
+      {index:50,emoji:'🍜',name:'新大阪'},
+      {index:60,emoji:'🍑',name:'岡山'},
+      {index:64,emoji:'🦪',name:'広島'},
+      {index:69,emoji:'🐡',name:'新下関'},
+      {index:71,emoji:'🍜',name:'博多'}
+    ];
+    
+    const WAYPOINTS = [
+      {name:'新大阪',emoji:'🍜',prefCode:'27',mapX:54.5,mapY:51.5},
+      {name:'京都',emoji:'⛩️',prefCode:'26',mapX:57.5,mapY:49.5},
+      {name:'米原',emoji:'🏔️',prefCode:'25',mapX:62,mapY:48},
+      {name:'岐阜羽島',emoji:'🦅',prefCode:'21',mapX:65.5,mapY:49.5},
+      {name:'名古屋',emoji:'🏯',prefCode:'23',mapX:67.5,mapY:50.5},
+      {name:'敦賀',emoji:'⚓',prefCode:'18',mapX:57,mapY:44},
+      {name:'越前たけふ',emoji:'🌾',prefCode:'18',mapX:54.5,mapY:43},
+      {name:'福井',emoji:'🦕',prefCode:'18',mapX:55.5,mapY:42.5},
+      {name:'芦原温泉',emoji:'♨️',prefCode:'18',mapX:56.5,mapY:42},
+      {name:'加賀温泉',emoji:'♨️',prefCode:'17',mapX:57.5,mapY:41.5},
+      {name:'小松',emoji:'🔧',prefCode:'17',mapX:58.5,mapY:41},
+      {name:'金沢',emoji:'🥢',prefCode:'17',mapX:59.5,mapY:40.5},
+      {name:'新高岡',emoji:'🌸',prefCode:'16',mapX:61.5,mapY:39.5},
+      {name:'富山',emoji:'💊',prefCode:'16',mapX:62.5,mapY:39},
+      {name:'黒部宇奈月温泉',emoji:'♨️',prefCode:'16',mapX:64,mapY:38.5},
+      {name:'糸魚川',emoji:'🦕',prefCode:'15',mapX:65.5,mapY:38},
+      {name:'上越妙高',emoji:'🌊',prefCode:'15',mapX:67,mapY:38.5},
+      {name:'長岡',emoji:'🎆',prefCode:'15',mapX:72,mapY:37.5},
+      {name:'燕三条',emoji:'🔨',prefCode:'15',mapX:71.5,mapY:36.5},
+      {name:'新潟',emoji:'🍚',prefCode:'15',mapX:71,mapY:35.5},
+      {name:'浦佐',emoji:'🌿',prefCode:'15',mapX:73,mapY:38.5},
+      {name:'越後湯沢',emoji:'⛷️',prefCode:'15',mapX:74.5,mapY:39.5},
+      {name:'上毛高原',emoji:'🏔️',prefCode:'10',mapX:76.5,mapY:40.5},
+      {name:'高崎',emoji:'🥊',prefCode:'10',mapX:77.5,mapY:42},
+      {name:'安中榛名',emoji:'♨️',prefCode:'10',mapX:76,mapY:42},
+      {name:'軽井沢',emoji:'🏔️',prefCode:'20',mapX:74.5,mapY:41.5},
+      {name:'佐久平',emoji:'🌾',prefCode:'20',mapX:73,mapY:41.5},
+      {name:'上田',emoji:'🏯',prefCode:'20',mapX:71.5,mapY:41.5},
+      {name:'長野',emoji:'🏔️',prefCode:'20',mapX:70,mapY:40},
+      {name:'飯山',emoji:'⛷️',prefCode:'20',mapX:68.5,mapY:39},
+      {name:'本庄早稲田',emoji:'📚',prefCode:'11',mapX:78.5,mapY:43},
+      {name:'熊谷',emoji:'🌺',prefCode:'11',mapX:79.5,mapY:43.5},
+      {name:'大宮',emoji:'🌸',prefCode:'11',mapX:81,mapY:44},
+      {name:'東京',emoji:'🗼',prefCode:'13',mapX:81.5,mapY:45.5},
+      {name:'上野',emoji:'🐼',prefCode:'13',mapX:81.5,mapY:45},
+      {name:'品川',emoji:'🏢',prefCode:'13',mapX:81.5,mapY:46},
+      {name:'新横浜',emoji:'⚾',prefCode:'14',mapX:81,mapY:47},
+      {name:'小田原',emoji:'🏯',prefCode:'14',mapX:79.5,mapY:48.5},
+      {name:'熱海',emoji:'♨️',prefCode:'22',mapX:78.5,mapY:50},
+      {name:'三島',emoji:'🗻',prefCode:'22',mapX:77,mapY:50.5},
+      {name:'新富士',emoji:'🗻',prefCode:'22',mapX:75,mapY:51},
+      {name:'静岡',emoji:'🍵',prefCode:'22',mapX:72.5,mapY:51.5},
+      {name:'掛川',emoji:'🍵',prefCode:'22',mapX:70,mapY:52},
+      {name:'浜松',emoji:'🥟',prefCode:'22',mapX:68,mapY:52.5},
+      {name:'豊橋',emoji:'🦌',prefCode:'23',mapX:67,mapY:52},
+      {name:'三河安城',emoji:'🏯',prefCode:'23',mapX:68,mapY:51},
+      {name:'名古屋',emoji:'🏯',prefCode:'23',mapX:67.5,mapY:50.5},
+      {name:'岐阜羽島',emoji:'🦅',prefCode:'21',mapX:65.5,mapY:49.5},
+      {name:'米原',emoji:'🏔️',prefCode:'25',mapX:62,mapY:48},
+      {name:'京都',emoji:'⛩️',prefCode:'26',mapX:57.5,mapY:49.5},
+      {name:'新大阪',emoji:'🍜',prefCode:'27',mapX:54.5,mapY:51.5},
+      {name:'新神戸',emoji:'🐂',prefCode:'28',mapX:53,mapY:52},
+      {name:'西明石',emoji:'🐙',prefCode:'28',mapX:51.5,mapY:52.5},
+      {name:'姫路',emoji:'🏯',prefCode:'28',mapX:50,mapY:52.5},
+      {name:'相生',emoji:'⚓',prefCode:'28',mapX:48.5,mapY:52.5},
+      {name:'岡山',emoji:'🍑',prefCode:'33',mapX:47,mapY:52.5},
+      {name:'新倉敷',emoji:'🏭',prefCode:'33',mapX:45,mapY:52.5},
+      {name:'福山',emoji:'🌹',prefCode:'34',mapX:43.5,mapY:52.5},
+      {name:'三原',emoji:'🐙',prefCode:'34',mapX:42,mapY:52},
+      {name:'東広島',emoji:'🍶',prefCode:'34',mapX:40.5,mapY:51.5},
+      {name:'広島',emoji:'🦪',prefCode:'34',mapX:39,mapY:51},
+      {name:'新岩国',emoji:'🏯',prefCode:'35',mapX:36.5,mapY:50.5},
+      {name:'徳山',emoji:'🏭',prefCode:'35',mapX:34,mapY:50},
+      {name:'新山口',emoji:'🍜',prefCode:'35',mapX:32,mapY:49.5},
+      {name:'厚狭',emoji:'⛏️',prefCode:'35',mapX:30,mapY:49},
+      {name:'新下関',emoji:'🐡',prefCode:'35',mapX:28,mapY:48.5},
+      {name:'小倉',emoji:'🏯',prefCode:'40',mapX:25,mapY:47.5},
+      {name:'博多',emoji:'🍜',prefCode:'40',mapX:23,mapY:47},
+      {name:'久留米',emoji:'🍜',prefCode:'40',mapX:21,mapY:46.5},
+      {name:'新鳥栖',emoji:'🚄',prefCode:'41',mapX:19.5,mapY:46},
+      {name:'新大牟田',emoji:'⛏️',prefCode:'40',mapX:18,mapY:45.5},
+      {name:'熊本',emoji:'🐴',prefCode:'43',mapX:16.5,mapY:45},
+      {name:'新八代',emoji:'🌿',prefCode:'43',mapX:15,mapY:44},
+      {name:'新水俣',emoji:'🐟',prefCode:'43',mapX:13.5,mapY:43},
+      {name:'出水',emoji:'🦩',prefCode:'46',mapX:12,mapY:42},
+      {name:'川内',emoji:'🏖️',prefCode:'46',mapX:10.5,mapY:41},
+      {name:'鹿児島中央',emoji:'🌋',prefCode:'46',mapX:9,mapY:40}
+    ];
+    
+    async function loadMap() {
+      const mapArea = document.getElementById('map-svg-area');
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/geolonia/japanese-prefectures/master/map-polygon.svg');
+        if (!response.ok) throw new Error('SVG取得失敗');
+        
+        const svgText = await response.text();
+        mapArea.innerHTML = svgText;
+        
+        const paths = mapArea.querySelectorAll('svg path, svg polygon');
+        paths.forEach((path, index) => {
+          path.classList.add('prefecture');
+          const id = path.getAttribute('id') || '';
+          const code = id.match(/\d+/)?.[0] || String(index + 1).padStart(2, '0');
+          path.setAttribute('data-code', code);
+        });
+        
+        console.log('✅ SVG地図読み込み完了、都道府県数:', paths.length);
+      } catch (error) {
+        console.warn('⚠️ SVG読み込み失敗、フォールバック表示:', error);
+        mapArea.innerHTML = `<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="400" cy="300" rx="300" ry="200" fill="#ffffff" stroke="#cccccc" stroke-width="2"/>
+          <text x="400" y="310" text-anchor="middle" font-size="24" fill="#666">日本地図</text>
+        </svg>`;
+      }
+    }
+    
+    function updateMapColors(totalStations) {
+      const prefs = document.querySelectorAll('#map-svg-area .prefecture');
+      if (!prefs.length) { console.warn('⚠️ 都道府県要素が見つかりません'); return; }
+      
+      const visited = new Set();
+      let currentPrefCode = null;
+      
+      WAYPOINTS.forEach((wp, index) => {
+        if (index < totalStations) {
+          visited.add(wp.prefCode.padStart(2, '0'));
+          if (index === totalStations - 1) currentPrefCode = wp.prefCode.padStart(2, '0');
+        }
+      });
+      
+      prefs.forEach(pref => {
+        const code = String(pref.dataset.code || '').padStart(2, '0');
+        pref.classList.remove('visited', 'current-pref');
+        if (code === currentPrefCode) {
+          pref.classList.add('current-pref');
+        } else if (visited.has(code)) {
+          pref.classList.add('visited');
+        }
+      });
+      
+      console.log('✅ 地図の色分け更新: 訪問済み', visited.size, '県, 現在地', currentPrefCode);
+    }
+    
+    async function renderAll() {
+      const { data, error } = await sb.from('participations').select('station_progress');
+      if (error) { console.error('❌ データ取得エラー:', error); return; }
+      
+      const totalStations = data.reduce((sum, p) => sum + (p.station_progress || 0), 0);
+      const progress = (totalStations / GOAL_GOLD) * 100;
+      
+      console.log('📊 合計訪問駅数:', totalStations);
+      
+      document.getElementById('progress-current').textContent = totalStations;
+      document.getElementById('progress-bar').style.width = Math.min(progress, 100) + '%';
+      
+      const currentStation = totalStations > 0 ? WAYPOINTS[totalStations - 1] : WAYPOINTS[0];
+      document.getElementById('current-location').textContent = currentStation.name;
+      
+      if (totalStations >= GOAL_BRONZE) document.getElementById('badge-bronze').classList.add('earned');
+      if (totalStations >= GOAL_SILVER) document.getElementById('badge-silver').classList.add('earned');
+      if (totalStations >= GOAL_GOLD) document.getElementById('badge-gold').classList.add('earned');
+      
+      const waypointList = document.getElementById('waypoint-list');
+      waypointList.innerHTML = WAYPOINTS.map((wp, index) => {
+        const visitedClass = index < totalStations ? 'visited' : '';
+        const currentClass = index === totalStations - 1 && totalStations > 0 ? 'current' : '';
+        return `<div class="waypoint-chip ${visitedClass} ${currentClass}">
+          <div class="waypoint-emoji">${wp.emoji}</div>
+          <div class="waypoint-name">${wp.name}</div>
+          <div class="waypoint-km">${index + 1}番目</div>
+        </div>`;
+      }).join('');
+      
+      const stampGrid = document.getElementById('stamp-grid');
+      stampGrid.innerHTML = STAMPS.map(stamp => {
+        const earned = totalStations > stamp.index;
+        return `<div class="stamp-card ${earned ? 'earned' : ''}">
+          <div class="stamp-emoji">${stamp.emoji}</div>
+          <div class="stamp-name">${stamp.name}</div>
+        </div>`;
+      }).join('');
+      
+      updateMapColors(totalStations);
+    }
+    
+    async function init() {
+      console.log('🚀 地図ページ初期化開始');
+      await loadMap();
+      await renderAll();
+      
+      sb.channel('public:participations').on('postgres_changes', { event: '*', schema: 'public', table: 'participations' }, () => {
+        console.log('🔄 リアルタイム更新を受信');
+        renderAll();
+      }).subscribe();
+      
+      console.log('✅ 初期化完了');
+    }
+    
+    init();
+  </script>
 </body>
 </html>

@@ -14,68 +14,59 @@
     <a href="map.html" class="nav-link active">🗾 全国の旅</a>
   </div>
 
-  <!-- メインコンテナ -->
   <div class="container map-container-wrapper">
-    
-    <!-- 左側：地図 -->
+    <!-- 左側：地図セクション -->
     <div class="map-section">
       <h1 class="page-title">🗺️ 全国鉄道の旅</h1>
-      
+
+      <!-- 進捗バー -->
       <div class="progress-section">
         <div class="progress-label">スタート地点</div>
         <div class="progress-info">
-          <span id="progress-current">0</span> / <span id="progress-total">3,800 km</span>
+          <span id="progress-current">0</span> / <span id="progress-total">126駅</span>
         </div>
         <div class="progress-bar-container">
-          <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+          <div id="progress-bar" class="progress-bar" style="width:0%;"></div>
         </div>
       </div>
 
-     <div class="stats-cards">
-  <div class="stat-card">
-    <div class="stat-number" id="total-distance">0駅</div>
-    <div class="stat-label">訪問駅数</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number" id="visited-stations">新大阪</div>
-    <div class="stat-label">現在地</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number" id="current-location">126駅中</div>
-    <div class="stat-label">総駅数</div>
-  </div>
-</div>
-
+      <!-- 統計カード -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-number" id="total-distance">0駅</div>
+          <div class="stat-label">訪問駅数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="visited-stations">新大阪</div>
+          <div class="stat-label">現在地</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="current-location">126駅中</div>
+          <div class="stat-label">総駅数</div>
+        </div>
+      </div>
 
       <!-- 地図エリア -->
-      <div id="map-container" class="map-area">
-        <!-- JavaScriptで描画 -->
-      </div>
+      <div id="map-container" class="map-area"></div>
     </div>
 
-    <!-- 右側：スタンプ＆ランキング -->
+    <!-- 右側：スタンプとランキング -->
     <div class="side-section">
-      
-      <!-- スタンプ -->
+      <!-- スタンプセクション -->
       <div class="stamps-section">
         <h2>🏛️ 名所スタンプ</h2>
         <div class="stamp-count">収集: <span id="stamp-count">0</span>/14</div>
-        <div id="stamp-grid" class="stamp-grid">
-          <!-- JavaScriptで生成 -->
-        </div>
+        <div id="stamp-grid" class="stamp-grid"></div>
       </div>
 
-      <!-- ランキング -->
+      <!-- ランキングセクション -->
       <div class="ranking-section">
         <h2>🏆 参加ランキング</h2>
-        <div id="ranking-list" class="ranking-list">
-          <!-- JavaScriptで生成 -->
-        </div>
+        <div id="ranking-list" class="ranking-list"></div>
       </div>
-
     </div>
   </div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>

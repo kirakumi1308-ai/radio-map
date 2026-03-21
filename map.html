@@ -3,79 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🗾 新幹線100駅の旅 - 全国マップ</title>
+  <title>🗾 新幹線全駅の旅 - 全国マップ</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ナビゲーション -->
   <div class="nav-links">
     <a href="index.html" class="nav-link">🚄 乗車報告</a>
     <a href="map.html" class="nav-link active">🗾 全国の旅</a>
   </div>
 
-  <div class="map-page-container">
+  <!-- メインコンテナ -->
+  <div class="container map-container-wrapper">
+    
+    <!-- 左側：地図 -->
     <div class="map-section">
-      <h2>🗾 全国鉄道の旅</h2>
+      <h1 class="page-title">🗺️ 全国鉄道の旅</h1>
       
-      <div class="progress-container">
+      <div class="progress-section">
+        <div class="progress-label">スタート地点</div>
         <div class="progress-info">
-          <span id="current-station">スタート地点</span>
-          <span id="distance-text">0 / 3,800 km</span>
+          <span id="progress-current">0</span> / <span id="progress-total">3,800 km</span>
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <div class="map-stats">
-        <div class="map-stat-card">
-          <div class="map-stat-value" id="total-distance">0 km</div>
-          <div class="map-stat-label">総走行距離</div>
-        </div>
-        <div class="map-stat-card">
-          <div class="map-stat-value" id="visited-stations">0</div>
-          <div class="map-stat-label">訪問駅数</div>
-        </div>
-        <div class="map-stat-card">
-          <div class="map-stat-value" id="current-location">東京</div>
-          <div class="map-stat-label">現在地</div>
+        <div class="progress-bar-container">
+          <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
         </div>
       </div>
 
-      <div class="map-container" id="map-container">
-        <div class="map-canvas" id="map-canvas"></div>
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-number" id="total-distance">0駅</div>
+          <div class="stat-label">総走行距離</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="visited-stations">新大阪</div>
+          <div class="stat-label">訪問駅数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="current-location">126駅中</div>
+          <div class="stat-label">現在地</div>
+        </div>
+      </div>
+
+      <!-- 地図エリア -->
+      <div id="map-container" class="map-area">
+        <!-- JavaScriptで描画 -->
       </div>
     </div>
 
-    <div class="stamp-section">
-      <div class="stamp-header">
+    <!-- 右側：スタンプ＆ランキング -->
+    <div class="side-section">
+      
+      <!-- スタンプ -->
+      <div class="stamps-section">
         <h2>🏛️ 名所スタンプ</h2>
-        <div class="stamp-progress" id="stamp-progress">収集: 0/14</div>
+        <div class="stamp-count">収集: <span id="stamp-count">0</span>/14</div>
+        <div id="stamp-grid" class="stamp-grid">
+          <!-- JavaScriptで生成 -->
+        </div>
       </div>
-      <div class="stamp-grid" id="stamp-grid"></div>
 
-      <div style="margin-top: 24px;">
+      <!-- ランキング -->
+      <div class="ranking-section">
         <h2>🏆 参加ランキング</h2>
-        <ul class="ranking-list" id="ranking-list">
-          <li style="text-align:center;color:#999;">データ読み込み中...</li>
-        </ul>
+        <div id="ranking-list" class="ranking-list">
+          <!-- JavaScriptで生成 -->
+        </div>
       </div>
+
     </div>
   </div>
 
-  <div class="stamp-modal" id="stamp-modal">
-    <div class="stamp-modal-content">
-      <div class="stamp-modal-icon" id="modal-icon">🏯</div>
-      <div class="stamp-modal-title" id="modal-title">東京タワー</div>
-      <div class="stamp-modal-info" id="modal-info">
-        <p><strong>所在地:</strong> 東京都</p>
-        <p><strong>取得日:</strong> 2026年3月19日</p>
-        <p><strong>説明:</strong> 東京のシンボルタワー</p>
-      </div>
-      <button class="stamp-modal-close" onclick="closeStampModal()">閉じる</button>
-    </div>
-  </div>
-
- <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>
